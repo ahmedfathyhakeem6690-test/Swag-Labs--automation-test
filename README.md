@@ -95,4 +95,4 @@ Tests can also be run from IntelliJ IDEA by right-clicking `runtest.xml` and cho
 ## Author
 
 **Ahmed Fathy** – Software Quality Control Engineer
-LinkedIn: *https://www.linkedin.com/in/ahmed-fathy-a6966a405/?isSelfProfile=true*
+LinkedIn: *https://www.linkedin.com/in/ahmed-fathy-a6966a405*
