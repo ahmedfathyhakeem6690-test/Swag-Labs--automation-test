@@ -1,98 +1,100 @@
-# Swag Labs – UI Test Automation
+# Swag Labs UI Test Automation
 
-UI test automation project for the [Swag Labs (Sauce Demo)](https://www.saucedemo.com/) web application, built with **Java**, **Selenium WebDriver** and **TestNG**, using the **Page Object Model** and **data-driven testing** with JSON.
+UI test automation framework for [Swag Labs (Sauce Demo)](https://www.saucedemo.com/). The project uses Java, Selenium WebDriver, TestNG, Page Object Model (POM), JSON test data, and Allure reporting.
+
+## Highlights
+
+- Page Objects separate page interactions from test assertions.
+- Login scenarios are data-driven from a JSON file.
+- Explicit waits are used instead of fixed delays.
+- A clean Chrome session starts for every test method.
+- Allure annotations and results provide readable test reporting.
 
 ## Tech Stack
 
 | Tool | Version | Purpose |
-|------|---------|---------|
+|---|---:|---|
 | Java | 21 | Programming language |
 | Selenium WebDriver | 4.49.0 | Browser automation |
-| TestNG | 7.12.0 | Test runner and assertions |
-| Jackson Databind | 2.17.2 | Reading JSON test data |
-| Maven | – | Build and dependency management |
+| TestNG | 7.12.0 | Test execution and assertions |
+| Jackson Databind | 2.17.2 | JSON test-data parsing |
+| Allure TestNG | 3.0.0 | Test-result reporting |
+| Maven | 3.8+ | Build and dependency management |
 
-## What Is Covered
+## Test Coverage
 
-### Login (`LoginTest`)
+| Area | Scenarios covered |
+|---|---|
+| Authentication | Valid login, locked user, invalid credentials, and required-password validation |
+| Inventory | Page URL/title/cart validation, product count, social links, and product subtotal |
+| Cart | Empty cart, add/remove products, and cart state after logout/login |
+| Checkout | Required customer-information validation |
 
-Each row in `testData.json` is executed as a separate test:
-
-| Username | Password | Expected result |
-|----------|----------|-----------------|
-| `standard_user` | `secret_sauce` | Redirected to the inventory page |
-| `locked_out_user` | `secret_sauce` | Error: *Sorry, this user has been locked out.* |
-| `wrong_user` | `123` | Error: *Username and password do not match any user in this service* + error icon displayed |
-| `standard_user` | *(empty)* | Error: *Password is required* |
-
-### Inventory (`InventoryTest`)
-
-After a successful login:
-
-- URL contains `inventory.html`
-- Page header contains "Swag Labs"
-- Cart icon is displayed
-- Exactly 6 products are listed
+The login test reads four credential cases from `testData.json`. Together with the remaining scenarios, the suite currently executes 11 test cases.
 
 ## Project Structure
 
+```text
+Swag Labs Test Automation/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   ├── Pages/          # Page Objects and reusable page utilities
+│   │   │   └── utils/          # JSON test-data reader
+│   │   └── resources/
+│   │       └── testdata/       # testData.json
+│   └── test/
+│       └── java/
+│           ├── base/           # WebDriver setup and teardown
+│           ├── liseteners/     # TestNG/Allure listener
+│           └── Tests/          # Test classes
+├── runtest.xml                 # TestNG suite definition
+└── pom.xml                     # Maven configuration
 ```
-src
-├── main
-│   ├── java
-│   │   ├── Pages          # Page Objects (LoginPage, InventoryPage)
-│   │   └── utils          # DataDriven – JSON data reader
-│   └── resources
-│       └── testdata       # testData.json
-└── test
-    └── java
-        ├── base           # BaseTest – browser setup and teardown
-        └── Tests          # LoginTest, InventoryTest
-runtest.xml                # TestNG suite file
-pom.xml
-```
-
-## Design Notes
-
-- **Page Object Model:** locators and page actions live in `Pages`, tests contain only scenarios and assertions.
-- **Explicit waits:** `WebDriverWait` with `ExpectedConditions` instead of fixed sleeps.
-- **Data-driven:** login scenarios are defined in JSON and fed to tests through a TestNG `@DataProvider`.
-- **Soft assertions:** `SoftAssert` is used so one test reports all of its failed checks together.
-- **Clean browser per test:** a new browser is started in `@BeforeMethod` and always closed in `@AfterMethod`.
 
 ## Prerequisites
 
 - JDK 21
-- Maven 3.8+
-- Google Chrome (Selenium Manager downloads the matching driver automatically)
+- Maven 3.8 or later
+- Google Chrome
+- Allure Commandline (optional, to generate or serve Allure reports locally)
 
-## How to Run
+Selenium Manager resolves the compatible ChromeDriver automatically.
+
+## Run the Tests
 
 ```bash
-# clone the repository
 git clone https://github.com/ahmedfathyhakeem6690-test/Swag-Labs--automation-test.git
-cd "Swag-Labs--automation-test/Swag Labs Test Automation/untitled"
+cd "Swag-Labs--automation-test/Swag Labs Test Automation"
 
-# run all tests
+# Run all tests
 mvn test
 
-# or run through the TestNG suite file
+# Or run the TestNG suite explicitly
 mvn test -Dsurefire.suiteXmlFiles=runtest.xml
 ```
 
-Tests can also be run from IntelliJ IDEA by right-clicking `runtest.xml` and choosing **Run**.
+Run commands from the directory containing `pom.xml` because the current JSON data reader uses a project-relative path.
 
-> The test data file is read using a relative path, so run the tests from the project root (the folder that contains `pom.xml`).
+## Allure Reports
+
+Test results are written to `target/allure-results`. With Allure Commandline installed, open a local report with:
+
+```bash
+allure serve target/allure-results
+```
+
+The TestNG listener can also generate a single-file report at `reports/index.html` after a run. New `target/` and `reports/` output is ignored by Git. Existing generated files already tracked by the repository should be removed from the Git index in a separate cleanup commit.
 
 ## Planned Improvements
 
-- Cart and checkout scenarios
-- Logout and product sorting scenarios
-- Screenshot on failure
-- Allure reporting
-- Run tests automatically with GitHub Actions
+- Add screenshot attachments on test failure.
+- Make the browser, headless mode, and base URL configurable.
+- Read test data from the classpath rather than a project-relative file path.
+- Add a Maven Wrapper and GitHub Actions CI workflow.
+- Standardize package and method names using Java conventions.
 
 ## Author
 
-**Ahmed Fathy** – Software Quality Control Engineer
-LinkedIn: *https://www.linkedin.com/in/ahmed-fathy-a6966a405*
+**Ahmed Fathy** — Software Quality Control Engineer
+[LinkedIn](https://www.linkedin.com/in/ahmed-fathy-a6966a405)
